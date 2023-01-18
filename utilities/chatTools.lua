@@ -10,7 +10,8 @@ function onChat(message, sender)
         ["init"] = setup,
         ["ls"] = printDynamicObjects,
         ["players"] = printSeatedPlayers,
-        ["find"] = spawnCubeAtLocation
+        ["find"] = spawnCubeAtLocation,
+        ["flip"] = flipObjectByGuid
     }
 
     if(chatCommands[commandName]) then
@@ -33,7 +34,7 @@ function spawnCubeAtLocation(message, sender)
     local object = spawnObject({
         type = "BlockSquare",
         position = {0, 20, 0},
-        scale = {1, 1, 1},
+        scale = {0.5, 0.5, 0.5},
         sound = true,
         snap_to_grid = true,
         callback_function = function(spawned_object)
@@ -64,4 +65,11 @@ function printDynamicObjects()
             print(key .. ": " .. value)
         end
     end
+end
+
+function flipObjectByGuid(message, sender)
+    _, _, _, guid = string.find(message, "^(%a+) (%w+)")
+    print("flipping " .. guid)
+    obj = getObjectFromGUID(guid)
+    obj.flip()
 end
