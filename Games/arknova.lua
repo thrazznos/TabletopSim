@@ -14,6 +14,10 @@ PLAYER_DATA = {
             getObjectFromGUID('ba176b'),getObjectFromGUID('98cf83'),getObjectFromGUID('c17872'),getObjectFromGUID('73a012'),
         },
         ['cubeBag'] = getObjectFromGUID('045dcd'),
+        ['conservationPointPawn'] = getObjectFromGUID('23f41a'),
+        ['appealPointPawn'] = getObjectFromGUID('15f2f4'),
+        ['reputationPointPawn'] = getObjectFromGUID('8f2664')
+
     },
     ['Yellow'] = {
         ['pos'] = Vector({-15.00, 0.98, -22.58}),
@@ -21,6 +25,9 @@ PLAYER_DATA = {
             getObjectFromGUID('d2bd1b'),getObjectFromGUID('49852f'),getObjectFromGUID('a33af6'),getObjectFromGUID('368676'),
         },
         ['cubeBag'] = getObjectFromGUID('18b382'),
+        ['conservationPointPawn'] = getObjectFromGUID('c0d4aa'),
+        ['appealPointPawn'] = getObjectFromGUID('fc8a15'),
+        ['reputationPointPawn'] = getObjectFromGUID('64f3fb')
     },
     ['Red'] = {
         ['pos'] = Vector({15.00, 0.98, -22.58}),
@@ -28,6 +35,9 @@ PLAYER_DATA = {
             getObjectFromGUID('d4c066'),getObjectFromGUID('de78d5'),getObjectFromGUID('3154c0'),getObjectFromGUID('7a6110'),
         },
         ['cubeBag'] = getObjectFromGUID('7780c2'),
+        ['conservationPointPawn'] = getObjectFromGUID('6880dc'),
+        ['appealPointPawn'] = getObjectFromGUID('8156c7'),
+        ['reputationPointPawn'] = getObjectFromGUID('e8ee40')
     },
     ['Blue'] = {
         ['pos'] = Vector({45.00, 0.98, -22.58}),
@@ -35,6 +45,9 @@ PLAYER_DATA = {
             getObjectFromGUID('91902e'),getObjectFromGUID('321c47'),getObjectFromGUID('28e95f'),getObjectFromGUID('018903'),
         },
         ['cubeBag'] = getObjectFromGUID('c4f4bc'),
+        ['conservationPointPawn'] = getObjectFromGUID('d21fc0'),
+        ['appealPointPawn'] = getObjectFromGUID('f67354'),
+        ['reputationPointPawn'] = getObjectFromGUID('c0f361')
     }
 }
 seatedPlayers = {}
@@ -113,10 +126,6 @@ function onLoad()
         createRefillButton()
     end
 end
-
-
-
-
 
 function setup(x)
     startGame()
