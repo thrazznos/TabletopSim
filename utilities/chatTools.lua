@@ -42,13 +42,14 @@ function spawnCubeAtLocation(message, sender)
             Wait.frames(function() 
                 local vec = spawned_object.getPosition()
                 spawned_object.setPositionSmooth({x, y, z})
+                spawned_object.use_gravity = true
             end, 60)
         end
     })
 end
 
 function printSeatedPlayers()
-    for _, player in ipairs(sortedSeatedPlayers) do
+    for _, player in ipairs(seatedPlayers) do
         print(player .. " is seated")
     end
 end

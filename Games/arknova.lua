@@ -4,6 +4,8 @@
 require("vscode/console")
 require("utilities/chatTools")
 
+DEBUG = false
+
 --------CONSTANTS-----------------------
 PLAYER_DATA = {
     ['White'] = {
@@ -35,7 +37,7 @@ PLAYER_DATA = {
         ['cubeBag'] = getObjectFromGUID('c4f4bc'),
     }
 }
-
+seatedPlayers = {}
 sortedSeatedPlayers = {}
 dynamic_assets = {}
 coffeeMarkerStartingLocations = {
@@ -79,18 +81,25 @@ soloActionMarkerLocations = {
     Vector({-0.56, 1.31, -24.61}),
 }
 
------------------------------------------
+------------------------------------------------------------
 
-function getSortedSeatedPlayers()
-    for key,_ in pairs(PLAYER_DATA) do
-        if (Player[key].seated) then
-            table.insert(sortedSeatedPlayers, key)
-        end
+--Collect Player list, seatedPlayers
+for key, value in pairs(PLAYER_DATA) do
+    if(Player[key].seated or DEBUG) then
+        table.insert(seatedPlayers, key)
     end
 end
 
-function setplayerpositions()
+function getSortedSeatedPlayers()
+    num = seatedPlayers
+    math.randomseed( os.time() )
+    offset = math.random(#seatedPlayers)
 
+    for i, _ in ipairs(num) do
+        --print(seatedPlayers[(i + offset) % #seatedPlayers + 1])
+        --Crazy modulus math cause not zero index
+        table.insert(sortedSeatedPlayers, seatedPlayers[(i + offset) % #seatedPlayers + 1]) 
+    end
 end
 
 function onLoad()
@@ -110,9 +119,7 @@ end
 
 
 function setup(x)
-    print("setting up Single Player")
-
-    spawnSinglePlayerBoard({0, 1, -22.5})
+    startGame()
     return
 end
 
@@ -184,7 +191,7 @@ function createRefillButton()
 end
 
 function createSetupButtons()
-    playerCount = math.max(#getSeatedPlayers(),1)
+    playerCount = math.max(#seatedPlayers,1)
     local board = getObjectFromGUID('157aa7')
     local bScale = board.getScale()
 
@@ -328,7 +335,7 @@ end
 
 function onPlayerChangeColor(color)
     if getObjectFromGUID('157aa7') then
-        playerCount = math.max(#getSeatedPlayers(), 1)
+        playerCount = math.max(#seatedPlayers, 1)
         updateBoard()
     end
 end
@@ -439,7 +446,7 @@ function startGame()
     end
 
     --starting player
-    local seatedPlayers = getSeatedPlayers()
+    --local seatedPlayers = getSeatedPlayers()
     local sp = seatedPlayers[math.random(1,#seatedPlayers)]
     if sp then
         local playerTable = {
