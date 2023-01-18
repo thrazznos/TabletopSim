@@ -1,0 +1,1 @@
+Tabletop simulator scripts for games and helper functions
