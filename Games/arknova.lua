@@ -94,6 +94,13 @@ soloActionMarkerLocations = {
     Vector({-0.56, 1.31, -24.61}),
 }
 
+appealStartingLocations = {
+    Vector({-30.60, 1.33, -7.67}),
+    Vector({-29.74, 1.33, -7.67}),
+    Vector({-28.89, 1.33, -7.67}),
+    Vector({-28.03, 1.33, -7.67}),
+}
+
 ------------------------------------------------------------
 
 --Collect Player list, seatedPlayers
@@ -117,7 +124,7 @@ end
 
 function onLoad()
     initMoneyCounters()
-    getSortedSeatedPlayers()
+    --getSortedSeatedPlayers()
     printSeatedPlayers()
 
     if getObjectFromGUID('157aa7') then
@@ -391,6 +398,7 @@ function updateMapBoard()
 end
 
 function startGame()
+    getSortedSeatedPlayers()
     getObjectFromGUID('157aa7').destruct()
     Notes.setNotes("")
 
@@ -454,6 +462,13 @@ function startGame()
         getObjectFromGUID('1e5455').destruct()
     end
 
+    --WIP
+
+    if(sortedSeatedPlayers) then
+        broadcastToAll(sortedSeatedPlayers[1] .. " is the starting player.", sortedSeatedPlayers[1])
+    end
+
+
     --starting player
     --local seatedPlayers = getSeatedPlayers()
     local sp = seatedPlayers[math.random(1,#seatedPlayers)]
@@ -464,7 +479,7 @@ function startGame()
             ['Red'] = {getObjectFromGUID('8156c7'), "Yellow"},
             ['Blue'] = {getObjectFromGUID('f67354'),"Red"},
         }
-        broadcastToAll(sp .. " is the starting player.", sp)
+        --broadcastToAll(sp .. " is the starting player.", sp)
         -- place starting points by turn order
         local posTable = {
             Vector({-30.60, 1.33, -7.67}),
