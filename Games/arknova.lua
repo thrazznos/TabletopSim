@@ -104,18 +104,21 @@ appealStartingLocations = {
 ------------------------------------------------------------
 
 --Collect Player list, seatedPlayers
-for key, value in pairs(PLAYER_DATA) do
-    if(Player[key].seated or DEBUG) then
-        table.insert(seatedPlayers, key)
+
+function setSeatedPlayers()
+    seatedPlayers = {}
+    for key, value in pairs(PLAYER_DATA) do
+        if(Player[key].seated or DEBUG) then
+            table.insert(seatedPlayers, key)
+        end
     end
 end
 
 function getSortedSeatedPlayers()
-    num = seatedPlayers
     math.randomseed( os.time() )
     offset = math.random(#seatedPlayers)
 
-    for i, _ in ipairs(num) do
+    for i, _ in ipairs(seatedPlayers) do
         --print(seatedPlayers[(i + offset) % #seatedPlayers + 1])
         --Crazy modulus math cause not zero index
         table.insert(sortedSeatedPlayers, seatedPlayers[(i + offset) % #seatedPlayers + 1]) 
@@ -124,8 +127,10 @@ end
 
 function onLoad()
     initMoneyCounters()
+    setSeatedPlayers()
     --getSortedSeatedPlayers()
     printSeatedPlayers()
+
 
     if getObjectFromGUID('157aa7') then
         createSetupButtons()
@@ -354,6 +359,8 @@ function onPlayerChangeColor(color)
         playerCount = math.max(#seatedPlayers, 1)
         updateBoard()
     end
+
+    setSeatedPlayers()
 end
 
 function manual()

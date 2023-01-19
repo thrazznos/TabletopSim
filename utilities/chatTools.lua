@@ -50,6 +50,7 @@ function spawnCubeAtLocation(message, sender)
 end
 
 function printSeatedPlayers()
+    print("Printing seated players")
     for _, player in ipairs(seatedPlayers) do
         print(player .. " is seated")
     end
