@@ -4,7 +4,7 @@
 require("vscode/console")
 require("utilities/chatTools")
 
-DEBUG = false
+DEBUG = true
 fastSetupAnimation = false
 fastGameAnimations = false
 
@@ -504,10 +504,10 @@ function startGame()
 
     --shuffle action cards
     local deckList = {
-        getObjectFromGUID('7373e8'),
-        getObjectFromGUID('84283e'),
-        getObjectFromGUID('50353a'),
-        getObjectFromGUID('077c7a'),
+        getObjectFromGUID('0c9750'),
+        getObjectFromGUID('8c5762'),
+        getObjectFromGUID('280aba'),
+        getObjectFromGUID('1d9c26'),
     }
     local offset = {
         Vector({-18.63, 1.00, -29.81})-Vector({-7.64, 1.00, -29.81}),
@@ -544,39 +544,8 @@ function setupMaps(type)
         bag = getObjectFromGUID('d71bb5')
     end
 
-    local playerTable = {
-        ['White'] = {
-            ['pos'] = Vector({-45.00, 0.98, -22.58}),
-            ['pawns'] = {
-                getObjectFromGUID('ba176b'),getObjectFromGUID('98cf83'),getObjectFromGUID('c17872'),getObjectFromGUID('73a012'),
-            },
-            ['cubeBag'] = getObjectFromGUID('045dcd'),
-        },
-        ['Yellow'] = {
-            ['pos'] = Vector({-15.00, 0.98, -22.58}),
-            ['pawns'] = {
-                getObjectFromGUID('d2bd1b'),getObjectFromGUID('49852f'),getObjectFromGUID('a33af6'),getObjectFromGUID('368676'),
-            },
-            ['cubeBag'] = getObjectFromGUID('18b382'),
-        },
-        ['Red'] = {
-            ['pos'] = Vector({15.00, 0.98, -22.58}),
-            ['pawns'] = {
-                getObjectFromGUID('d4c066'),getObjectFromGUID('de78d5'),getObjectFromGUID('3154c0'),getObjectFromGUID('7a6110'),
-            },
-            ['cubeBag'] = getObjectFromGUID('7780c2'),
-        },
-        ['Blue'] = {
-            ['pos'] = Vector({45.00, 0.98, -22.58}),
-            ['pawns'] = {
-                getObjectFromGUID('91902e'),getObjectFromGUID('321c47'),getObjectFromGUID('28e95f'),getObjectFromGUID('018903'),
-            },
-            ['cubeBag'] = getObjectFromGUID('c4f4bc'),
-        },
-    }
-
     local numSetup = 0
-    for color,sub in pairs(playerTable) do
+    for color,sub in pairs(PLAYER_DATA) do
         if Player[color].seated then
             --draw board
             numSetup = numSetup + 1
@@ -588,7 +557,7 @@ function setupMaps(type)
         end
     end
 
-    for color,sub in pairs(playerTable) do
+    for color,sub in pairs(PLAYER_DATA) do
         if numSetup>=playerCount then break end
         if not Player[color].seated then
             --draw board
@@ -611,19 +580,19 @@ end
 function setupPlayer(board, sub)
     local basePos = board.getPosition()
     local s = board.getScale().x
-    local bag = sub.cubeBag
+    local bag = getObjectFromGUID(sub.cubeBag)
 
     --pawns & cubes
     local pawnCount = 1
     local snaps = board.getSnapPoints()
     for _,snap in ipairs(snaps) do
         if snap.tags[1]=='assist' then
-            local currPawn = sub.pawns[pawnCount]
+            local currPawn = getObjectFromGUID(sub.pawns[pawnCount])
             local pos = basePos + s*snap.position:inverse()+Vector(0,1,0)
             currPawn.setPositionSmooth(pos,false,false)
             pawnCount = pawnCount+1
             if pawnCount==4 then
-                currPawn = sub.pawns[pawnCount]
+                currPawn = getObjectFromGUID(sub.pawns[pawnCount])
                 currPawn.setPositionSmooth(basePos+Vector(8.29,0.11,1.32),false,false)
             end
         elseif snap.tags[1]=='cube' then
