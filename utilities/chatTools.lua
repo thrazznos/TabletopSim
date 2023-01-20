@@ -56,6 +56,13 @@ function printSeatedPlayers()
     end
 end
 
+function printUnseatedPlayers()
+    print("Printing unseated players")
+    for _, player in ipairs(unseatedPlayers) do
+        print(player .. " is unseated")
+    end
+end
+
 --Utility Functions
 function printDynamicObjects()
     if(dynamic_assets == nil) then

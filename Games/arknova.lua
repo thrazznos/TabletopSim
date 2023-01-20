@@ -5,52 +5,55 @@ require("vscode/console")
 require("utilities/chatTools")
 
 DEBUG = false
+fastSetupAnimation = false
+fastGameAnimations = false
 
 --------CONSTANTS-----------------------
 PLAYER_DATA = {
     ['White'] = {
         ['pos'] = Vector({-45.00, 0.98, -22.58}),
         ['pawns'] = {
-            getObjectFromGUID('ba176b'),getObjectFromGUID('98cf83'),getObjectFromGUID('c17872'),getObjectFromGUID('73a012'),
+            'ba176b','98cf83','c17872','73a012',
         },
-        ['cubeBag'] = getObjectFromGUID('045dcd'),
-        ['conservationPointPawn'] = getObjectFromGUID('23f41a'),
-        ['appealPointPawn'] = getObjectFromGUID('15f2f4'),
-        ['reputationPointPawn'] = getObjectFromGUID('8f2664')
+        ['cubeBag'] = '045dcd',
+        ['conservationPointPawn'] = '23f41a',
+        ['appealPointPawn'] = '15f2f4',
+        ['reputationPointPawn'] = '8f2664'
 
     },
     ['Yellow'] = {
         ['pos'] = Vector({-15.00, 0.98, -22.58}),
         ['pawns'] = {
-            getObjectFromGUID('d2bd1b'),getObjectFromGUID('49852f'),getObjectFromGUID('a33af6'),getObjectFromGUID('368676'),
+            'd2bd1b','49852f','a33af6','368676',
         },
-        ['cubeBag'] = getObjectFromGUID('18b382'),
-        ['conservationPointPawn'] = getObjectFromGUID('c0d4aa'),
-        ['appealPointPawn'] = getObjectFromGUID('fc8a15'),
-        ['reputationPointPawn'] = getObjectFromGUID('64f3fb')
+        ['cubeBag'] = '18b382',
+        ['conservationPointPawn'] = 'c0d4aa',
+        ['appealPointPawn'] = 'fc8a15',
+        ['reputationPointPawn'] = '64f3fb'
     },
     ['Red'] = {
         ['pos'] = Vector({15.00, 0.98, -22.58}),
         ['pawns'] = {
-            getObjectFromGUID('d4c066'),getObjectFromGUID('de78d5'),getObjectFromGUID('3154c0'),getObjectFromGUID('7a6110'),
+            'd4c066','de78d5','3154c0','7a6110',
         },
-        ['cubeBag'] = getObjectFromGUID('7780c2'),
-        ['conservationPointPawn'] = getObjectFromGUID('6880dc'),
-        ['appealPointPawn'] = getObjectFromGUID('8156c7'),
-        ['reputationPointPawn'] = getObjectFromGUID('e8ee40')
+        ['cubeBag'] = '7780c2',
+        ['conservationPointPawn'] = '6880dc',
+        ['appealPointPawn'] = '8156c7',
+        ['reputationPointPawn'] = 'e8ee40'
     },
     ['Blue'] = {
         ['pos'] = Vector({45.00, 0.98, -22.58}),
         ['pawns'] = {
-            getObjectFromGUID('91902e'),getObjectFromGUID('321c47'),getObjectFromGUID('28e95f'),getObjectFromGUID('018903'),
+            '91902e','321c47','28e95f','018903',
         },
-        ['cubeBag'] = getObjectFromGUID('c4f4bc'),
-        ['conservationPointPawn'] = getObjectFromGUID('d21fc0'),
-        ['appealPointPawn'] = getObjectFromGUID('f67354'),
-        ['reputationPointPawn'] = getObjectFromGUID('c0f361')
+        ['cubeBag'] = 'c4f4bc',
+        ['conservationPointPawn'] = 'd21fc0',
+        ['appealPointPawn'] = 'f67354',
+        ['reputationPointPawn'] = 'c0f361'
     }
 }
 seatedPlayers = {}
+unseatedPlayers = {}
 sortedSeatedPlayers = {}
 dynamic_assets = {}
 coffeeMarkerStartingLocations = {
@@ -99,17 +102,18 @@ appealStartingLocations = {
     Vector({-29.74, 1.33, -7.67}),
     Vector({-28.89, 1.33, -7.67}),
     Vector({-28.03, 1.33, -7.67}),
+    Vector({-13.52, 1.33, -7.67})
 }
 
 ------------------------------------------------------------
 
 --Collect Player list, seatedPlayers
-
 function setSeatedPlayers()
-    seatedPlayers = {}
-    for key, value in pairs(PLAYER_DATA) do
+    for key, _ in pairs(PLAYER_DATA) do
         if(Player[key].seated or DEBUG) then
             table.insert(seatedPlayers, key)
+        else
+            table.insert(unseatedPlayers, key)
         end
     end
 end
@@ -415,7 +419,7 @@ function startGame()
     --place coffee marker, skip for 1p
     if (playerCount > 1) then
         local coffeeMarker = getObjectFromGUID('bbf4bd')
-        coffeeMarker.setPositionSmooth(coffeeMarkerStartingLocations[playerCount], false, true)
+        coffeeMarker.setPositionSmooth(coffeeMarkerStartingLocations[playerCount], false, fastSetupAnimation)
     end
 
     --bonus tiles
@@ -475,45 +479,27 @@ function startGame()
         broadcastToAll(sortedSeatedPlayers[1] .. " is the starting player.", sortedSeatedPlayers[1])
     end
 
+    --appealStartingLocations
 
-    --starting player
-    --local seatedPlayers = getSeatedPlayers()
-    local sp = seatedPlayers[math.random(1,#seatedPlayers)]
-    if sp then
-        local playerTable = {
-            ['White'] = {getObjectFromGUID('15f2f4'), "Blue"},
-            ['Yellow'] = {getObjectFromGUID('fc8a15'), "White"},
-            ['Red'] = {getObjectFromGUID('8156c7'), "Yellow"},
-            ['Blue'] = {getObjectFromGUID('f67354'),"Red"},
-        }
-        --broadcastToAll(sp .. " is the starting player.", sp)
-        -- place starting points by turn order
-        local posTable = {
-            Vector({-30.60, 1.33, -7.67}),
-            Vector({-29.74, 1.33, -7.67}),
-            Vector({-28.89, 1.33, -7.67}),
-            Vector({-28.03, 1.33, -7.67}),
-        }
-        local otherPosTable = {
-            Vector({-33.03, 1.33, -8.47}),
-            Vector({-33.03, 1.33, -7.87}),
-            Vector({-33.03, 1.33, -7.27}),
-            Vector({-33.03, 1.33, -6.67}),
-        }
-        local currPlayer = sp
-        local yesNdx = 1
-        local noNdx = 1
-        for i=1,4 do
-            local o = playerTable[currPlayer][1]
-            if Player[currPlayer].seated then
-                o.setPositionSmooth(posTable[yesNdx], false, true)
-                yesNdx = yesNdx+1
-            else
-                o.setPositionSmooth(otherPosTable[noNdx], false, true)
-                noNdx = noNdx+1
-            end
-            currPlayer = playerTable[currPlayer][2]
+    if(#sortedSeatedPlayers == 1) then
+        local appealPawn = getObjectFromGUID(PLAYER_DATA[sortedSeatedPlayers[1]].appealPointPawn)
+        appealPawn.setPositionSmooth(appealStartingLocations[5], false, fastSetupAnimation)
+    else
+        for i, color in pairs(sortedSeatedPlayers) do
+            appealPawn = getObjectFromGUID(PLAYER_DATA[color].appealPointPawn)
+            appealPawn.setPositionSmooth(appealStartingLocations[i], false, fastSetupAnimation)
         end
+    end
+    
+    --remove unseated appeal tokens
+    for i, value in ipairs(unseatedPlayers) do
+        getObjectFromGUID(PLAYER_DATA[value].appealPointPawn).destruct()
+    end
+
+    --remove unseated reputation and conservation tokens
+    for i, value in ipairs(unseatedPlayers) do
+        getObjectFromGUID(PLAYER_DATA[value].conservationPointPawn).destruct()
+        getObjectFromGUID(PLAYER_DATA[value].reputationPointPawn).destruct()
     end
 
     --shuffle action cards
