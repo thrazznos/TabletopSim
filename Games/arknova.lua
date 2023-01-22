@@ -4,7 +4,7 @@
 require("vscode/console")
 require("utilities/chatTools")
 
-DEBUG = true
+DEBUG = false
 fastSetupAnimation = false
 fastGameAnimations = false
 
@@ -103,6 +103,23 @@ appealStartingLocations = {
     Vector({-28.89, 1.33, -7.67}),
     Vector({-28.03, 1.33, -7.67}),
     Vector({-13.52, 1.33, -7.67})
+}
+
+singlePlayerBoardOffset = Vector({-15, 0, 0})
+
+mapGuids = {
+    ["0"] = "",
+    ['A'] = "",
+    ['1'] = "5c094e",
+    ['2'] = "4c89da",
+    ['3'] = "a6c7a5",
+    ['4'] = "7af8d5",
+    ['5'] = "73540d",
+    ['6'] = "38cff8",
+    ['7'] = "5be757",
+    ['8'] = "ef5c14",
+    ['9'] = "ddbbd5",
+    ['10'] = "e88324",
 }
 
 ------------------------------------------------------------
@@ -458,6 +475,7 @@ function startGame()
             for _,pos in ipairs(soloActionMarkerLocations) do
                 local o = bag.takeObject({position=pos})
             end
+            spawnSinglePlayerBoard(PLAYER_DATA[sortedSeatedPlayers[1]].pos + singlePlayerBoardOffset)
         end
         if playerCount == 2 then
             for _,pos in ipairs(twoPlayerConservationBlockCubeLocations) do
@@ -472,8 +490,6 @@ function startGame()
     if playerCount~=1 then
         getObjectFromGUID('1e5455').destruct()
     end
-
-    --WIP
 
     if(sortedSeatedPlayers) then
         broadcastToAll(sortedSeatedPlayers[1] .. " is the starting player.", sortedSeatedPlayers[1])
@@ -501,6 +517,8 @@ function startGame()
         getObjectFromGUID(PLAYER_DATA[value].conservationPointPawn).destruct()
         getObjectFromGUID(PLAYER_DATA[value].reputationPointPawn).destruct()
     end
+
+    --WIP
 
     --shuffle action cards
     local deckList = {
@@ -544,32 +562,18 @@ function setupMaps(type)
         bag = getObjectFromGUID('d71bb5')
     end
 
-    local numSetup = 0
-    for color,sub in pairs(PLAYER_DATA) do
-        if Player[color].seated then
-            --draw board
-            numSetup = numSetup + 1
-            local o = bag.takeObject({position = sub.pos})
-            o.setLock(true)
-            o.setRotation({0,180,0})
+    for i, color in ipairs(sortedSeatedPlayers) do
+        --draw board
+        local o = bag.takeObject({position = PLAYER_DATA[color].pos})
+        o.setLock(true)
+        o.setRotation({0,180,0})
 
-            Wait.time(function() setupPlayer(o, sub) end, 2)
-        end
+        Wait.time(function() setupPlayer(o, PLAYER_DATA[color]) end, 2)
     end
 
-    for color,sub in pairs(PLAYER_DATA) do
-        if numSetup>=playerCount then break end
-        if not Player[color].seated then
-            --draw board
-            numSetup = numSetup + 1
-            local o = bag.takeObject({position = sub.pos})
-            o.setLock(true)
-            o.setRotation({0,180,0})
 
-            Wait.time(function() setupPlayer(o, sub) end, 2)
-        end
-    end
 
+    --destroy map bags
     getObjectFromGUID('9e3768').destruct()
     getObjectFromGUID('d71bb5').destruct()
     getObjectFromGUID('7f96e0').destruct()
