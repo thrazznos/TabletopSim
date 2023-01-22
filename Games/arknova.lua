@@ -105,7 +105,6 @@ appealStartingLocations = {
     Vector({-13.52, 1.33, -7.67})
 }
 
-singlePlayerBoardOffset = Vector({-15, 0, 0})
 singlePlayerBoardGuid = "1e5455"
 
 mapGuids = {
@@ -446,10 +445,20 @@ function startGame()
     local bag = getObjectFromGUID('669758')
         if playerCount == 1 then
             --solo markers
-            for _,pos in ipairs(soloActionMarkerLocations) do
-                local o = bag.takeObject({position=pos})
+            singlePlayerBoardOffset = Vector({-11.64, 0, 0})
+            tokenStartingLocation = Vector({-0.56, 1.31, 1.90})
+            tokenOffset = Vector({0, 0, -0.65})
+            
+            singlePlayerBoardLocation = PLAYER_DATA[sortedSeatedPlayers[1]].pos + singlePlayerBoardOffset
+            spawnSinglePlayerBoard(singlePlayerBoardLocation)
+
+            for i=1, 7 do
+                bag.takeObject(
+                    {position=singlePlayerBoardLocation + 
+                    tokenStartingLocation +
+                    tokenOffset * (i -1)
+                })
             end
-            spawnSinglePlayerBoard(PLAYER_DATA[sortedSeatedPlayers[1]].pos + singlePlayerBoardOffset)
         end
         if playerCount == 2 then
             for _,pos in ipairs(twoPlayerConservationBlockCubeLocations) do
