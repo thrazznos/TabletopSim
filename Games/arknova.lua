@@ -106,6 +106,7 @@ appealStartingLocations = {
 }
 
 singlePlayerBoardOffset = Vector({-15, 0, 0})
+singlePlayerBoardGuid = "1e5455"
 
 mapGuids = {
     ["0"] = "",
@@ -166,45 +167,18 @@ function setup(x)
 end
 
 function spawnSinglePlayerBoard(spawn_position)
-    if(dynamic_assets["singlePlayerBoard"]) then
-        print("Single Player Board already exists.")
-        return
-    end
-    params = {
-        type = 0,
-        face = "http://cloud-3.steamusercontent.com/ugc/1750203778410497436/82548DFE91F68C616307C0EE88CE4A672929F042/",
-        back = "http://cloud-3.steamusercontent.com/ugc/1750203778410497436/82548DFE91F68C616307C0EE88CE4A672929F042/",
-        thickness = 0.1
-    }
+    singlePlayerBoard = getObjectFromGUID(singlePlayerBoardGuid)
+    singlePlayerBoard.setPositionSmooth(spawn_position, false, fastSetupAnimations)
 
-    spawnZoneOffset = Vector({6, 1.5, 0})
-
-    singlePlayerBoard = spawnObject({
-        type = "CardCustom",
-        position = spawn_position,
-        scale = {1.7, 1.7, 1.7},
-        rotation = {0, 180, 0},
-        sound = false,
-        callback_function = function(spawned_object) 
-            print("Spawning Single Player Board: " .. spawned_object.getGUID()) 
-            dynamic_assets["singlePlayerBoard"] = spawned_object.getGUID()
-            spawned_object.setLock(true)
-            spawned_object.setDescription("Do not move!")
-            --spawned_object.setName("Single Player Action Tracker")
-
-            --Create its associated scripting zone
-            parentPos = getObjectFromGUID(spawned_object.getGUID()).getPosition()
-            zone = spawnObject({
-                type = "ScriptingTrigger",
-                position = {parentPos.x, parentPos.y + 1, parentPos.z},
-                scale = {3, 1, 5},
-                callback_function = function(spawned_zone)
-                    print("Spawning Single Player Board Zone: " .. spawned_zone.getGUID())
-                    dynamic_assets["singlePlayerBoardZone"] = spawned_zone.getGUID()
-                end
-            })
+    zone = spawnObject({
+        type = "ScriptingTrigger",
+        position = {spawn_position.x, spawn_position.y + 1, spawn_position.z},
+        scale = {3, 1, 5},
+        callback_function = function(spawned_zone)
+            print("Spawning Single Player Board Zone: " .. spawned_zone.getGUID())
+            dynamic_assets["singlePlayerBoardZone"] = spawned_zone.getGUID()
         end
-    }).setCustomObject(params)
+    })
 end
 
 function createRefillButton()
