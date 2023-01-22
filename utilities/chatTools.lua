@@ -11,7 +11,8 @@ function onChat(message, sender)
         ["ls"] = printDynamicObjects,
         ["players"] = printSeatedPlayers,
         ["find"] = spawnCubeAtLocation,
-        ["flip"] = flipObjectByGuid
+        ["flip"] = flipObjectByGuid,
+        ["move"] = incrementSinglePlayerActionTracker
     }
 
     if(chatCommands[commandName]) then

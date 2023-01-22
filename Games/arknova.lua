@@ -448,7 +448,7 @@ function startGame()
             singlePlayerBoardOffset = Vector({-11.64, 0, 0})
             tokenStartingLocation = Vector({-0.56, 1.31, 1.90})
             tokenOffset = Vector({0, 0, -0.65})
-            
+
             singlePlayerBoardLocation = PLAYER_DATA[sortedSeatedPlayers[1]].pos + singlePlayerBoardOffset
             spawnSinglePlayerBoard(singlePlayerBoardLocation)
 
@@ -796,6 +796,7 @@ function onObjectEnterScriptingZone(zone, enter_object)
     if zone.guid == selected_card_zone_guid then 
         slideCards()
         placeCard1()
+        incrementSinglePlayerActionTracker()
         --saveCardPositions()
     end
 end
@@ -878,6 +879,25 @@ function getTableSize(t)
     return count
 end
 
+function incrementSinglePlayerActionTracker()
+    action_zone = getObjectFromGUID(dynamic_assets["singlePlayerBoardZone"])
+    if(action_zone) then
+        local tokens = action_zone.getObjects()
+        table.sort(tokens, sortSinglePlayerTokens)
+        currPos = tokens[1].getPosition()
+        tokens[1].setPositionSmooth(currPos + Vector({0.63, 0, 0}), false, fastGameAnimations)
+    else    
+        print "SinglePlayerBoard zone not found"
+    end
+end
 
+function sortSinglePlayerTokens(a, b)
+    loc_a = a.getPosition()
+    loc_b = b.getPosition()
 
-
+    if(loc_a.x == loc_b.x) then
+        return loc_a.z > loc_b.z
+    else
+        return loc_a.x < loc_b.x
+    end
+end
