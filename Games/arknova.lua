@@ -18,8 +18,16 @@ PLAYER_DATA = {
         ['cubeBag'] = '045dcd',
         ['conservationPointPawn'] = '23f41a',
         ['appealPointPawn'] = '15f2f4',
-        ['reputationPointPawn'] = '8f2664'
-
+        ['reputationPointPawn'] = '8f2664',
+        ['selection_row_zone'] = 'befcfe',
+        ['selected_card_zone'] = 'e363bd',
+        ['actionCardLocations'] = {        
+            Vector({-48.63, 1.00, -29.81}),
+            Vector({-44.96, 1.00, -29.81}),
+            Vector({-41.30, 1.00, -29.81}),
+            Vector({-37.64, 1.00, -29.81}),
+            Vector({-52.29, 1.00, -29.81})
+        }
     },
     ['Yellow'] = {
         ['pos'] = Vector({-15.00, 0.98, -22.58}),
@@ -29,7 +37,16 @@ PLAYER_DATA = {
         ['cubeBag'] = '18b382',
         ['conservationPointPawn'] = 'c0d4aa',
         ['appealPointPawn'] = 'fc8a15',
-        ['reputationPointPawn'] = '64f3fb'
+        ['reputationPointPawn'] = '64f3fb',
+        ['selection_row_zone'] = 'ef4d6c',
+        ['selected_card_zone'] = '294ad1',
+        ['actionCardLocations'] = {        
+            Vector({-18.63, 1.00, -29.81}),
+            Vector({-14.96, 1.00, -29.81}),
+            Vector({-11.30, 1.00, -29.81}),
+            Vector({-7.64, 1.00, -29.81}),
+            Vector({-22.29, 1.00, -29.81})
+        }
     },
     ['Red'] = {
         ['pos'] = Vector({15.00, 0.98, -22.58}),
@@ -39,7 +56,16 @@ PLAYER_DATA = {
         ['cubeBag'] = '7780c2',
         ['conservationPointPawn'] = '6880dc',
         ['appealPointPawn'] = '8156c7',
-        ['reputationPointPawn'] = 'e8ee40'
+        ['reputationPointPawn'] = 'e8ee40',
+        ['selection_row_zone'] = '4bbbaa',
+        ['selected_card_zone'] = 'c4aca7',
+        ['actionCardLocations'] = {        
+            Vector({11.37, 1.00, -29.81}),
+            Vector({15.04, 1.00, -29.81}),
+            Vector({18.70, 1.00, -29.81}),
+            Vector({22.36, 1.00, -29.81}),
+            Vector({7.71, 1.00, -29.81})
+        }
     },
     ['Blue'] = {
         ['pos'] = Vector({45.00, 0.98, -22.58}),
@@ -49,7 +75,16 @@ PLAYER_DATA = {
         ['cubeBag'] = 'c4f4bc',
         ['conservationPointPawn'] = 'd21fc0',
         ['appealPointPawn'] = 'f67354',
-        ['reputationPointPawn'] = 'c0f361'
+        ['reputationPointPawn'] = 'c0f361',
+        ['selection_row_zone'] = '012ca4',
+        ['selected_card_zone'] = '5882a8',
+        ['actionCardLocations'] = {        
+            Vector({41.37, 1.00, -29.81}),
+            Vector({45.04, 1.00, -29.81}),
+            Vector({48.70, 1.00, -29.81}),
+            Vector({52.36, 1.00, -29.81}),
+            Vector({37.71, 1.00, -29.81})
+        }
     }
 }
 seatedPlayers = {}
@@ -786,43 +821,38 @@ function asdf()
 end
 ]]
 
-
-selection_row_zone_guid = "4bbbaa"
-selected_card_zone_guid = "c4aca7"
-
 card_location_history = {}
 
 function onObjectEnterScriptingZone(zone, enter_object)
-    if zone.guid == selected_card_zone_guid then 
-        slideCards()
-        placeCard1()
-        incrementSinglePlayerActionTracker()
-        --saveCardPositions()
+    for key, player in pairs(PLAYER_DATA) do
+        if(zone.guid == player.selected_card_zone) then
+            slideCards(player)
+            placeCard1(player)
+            if(playerCount == 1) then
+                incrementSinglePlayerActionTracker()
+            end
+        end
     end
+
 end
 
-function slideCards()
-    local posTable = {
-        Vector({11.37, 1.00, -29.81}),
-        Vector({15.04, 1.00, -29.81}),
-        Vector({18.70, 1.00, -29.81}),
-        Vector({22.36, 1.00, -29.81})
-    }
-
-    local rowZone = getObjectFromGUID(selection_row_zone_guid)
+function slideCards(player)
+    local rowZone = getObjectFromGUID(player.selection_row_zone)
+    print(rowZone.guid)
     local cards = getSortedCardsInZone(rowZone)
 
     --slide existing cards
     for i,card in ipairs(cards) do
-        card.setPositionSmooth(posTable[i], false, false)
+        card.setPositionSmooth(player.actionCardLocations[i], false, false)
     end
 end
 
-function placeCard1()
-    local selectionZone = getObjectFromGUID(selected_card_zone_guid)
+function placeCard1(player)
+
+    local selectionZone = getObjectFromGUID(player.selected_card_zone)
     local selected_card = selectionZone.getObjects()
     print(selected_card[1].getName())
-    local position1 = Vector({7.71, 1.00, -29.81})
+    local position1 = player.actionCardLocations[5]
     selected_card[1].setPositionSmooth(position1, false, false)
 end
 
